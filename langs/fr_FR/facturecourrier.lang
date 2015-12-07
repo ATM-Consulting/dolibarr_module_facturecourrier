@@ -6,3 +6,4 @@ ATMAbout = Ce module a été développé par <a href="http://www.atm-consulting.
 FactureCourrierSetup = Configuration du module FactureCourrier
 FactureCourrierAbout = A propos du module FactureCourrier
 ClassifyCourrier=Classé envoyé par courrier
+BillsByPrint=Factures à envoyer par courrier
