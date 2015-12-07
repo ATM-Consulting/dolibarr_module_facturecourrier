@@ -78,7 +78,45 @@ class ActionsFactureCourrier
 		
 	}
 	
+	function getFormMail($parameters, &$object, &$action, $hookmanager)
+	{
+		
+		if (in_array('formmail', explode(':', $parameters['context'])))
+		{
+			if(!empty($object->param['facid'])) {
+				global $db;
+				
+				$facture = new Facture($db);
+				$facture->fetch($object->param['facid']);
+				
+				if($facture->socid>0) {
+					$societe=new Societe($db);
+					$societe->fetch($facture->socid);
+					
+					if($societe->array_options['options_facture_papier'] == 1) {
+						
+						?><script type="text/javascript">
+							$("<div>Attention ce client est paramétré par défaut en courrier</div>").dialog({
+								modal:true
+								,title:"Attention !"
+								,buttons: {
+						        	Ok: function() {
+						          		$( this ).dialog( "close" );
+						        	}
+						      	}
+							});
+						</script><?php
+						
+					}
+				
+				}
+				
+			}						
 	
+		}
+		
+	}
+
 	function formObjectOptions($parameters, &$object, &$action, $hookmanager)
 	{
 		

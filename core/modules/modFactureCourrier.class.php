@@ -89,7 +89,7 @@ class modFactureCourrier extends DolibarrModules
 		//                        );
 		$this->module_parts = array(
 		
-			'hooks'=>'invoicecard'
+			'hooks'=>array('invoicecard','formmail')
 		);
 
 		// Data directories to create when module is enabled.
