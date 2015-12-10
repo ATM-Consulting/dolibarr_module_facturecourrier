@@ -7,3 +7,4 @@ FactureCourrierSetup = Configuration du module FactureCourrier
 FactureCourrierAbout = A propos du module FactureCourrier
 ClassifyCourrier=Classé envoyé par courrier
 BillsByPrint=Factures à envoyer par courrier
+FactureCourrier=Factures à envoyées par courrier

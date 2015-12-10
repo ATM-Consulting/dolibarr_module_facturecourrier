@@ -82,20 +82,23 @@ class ActionsFactureCourrier
 		
 		if (in_array('formmail', explode(':', $parameters['context'])))
 		{
+			
 			if(!empty($object->param['facid'])) {
 				global $db;
 				
 				$facture = new Facture($db);
-				$facture->fetch($object->param['facid']);
+				$facture->fetch((int)$object->param['facid']);
+				//var_dump($facture);
 				
 				if($facture->socid>0) {
-					$societe=new Societe($db);
-					$societe->fetch($facture->socid);
+					if(empty($facture->thirdparty)) $facture->fetch_thirdparty();
+					$societe = & $facture->thirdparty;
 					
-					if($societe->array_options['options_facture_papier'] == 1) {
+					if(!empty($societe->array_options['options_facture_papier']) && $societe->array_options['options_facture_papier'] == 2) {
 						
 						?><script type="text/javascript">
-							$("<div>Attention ce client est paramétré par défaut en courrier</div>").dialog({
+						$(document).ready(function() {
+							$("<div style=\"color:red;font-weight:bold;\">Attention ce client est paramétré par défaut en courrier</div>").dialog({
 								modal:true
 								,title:"Attention !"
 								,buttons: {
@@ -104,6 +107,7 @@ class ActionsFactureCourrier
 						        	}
 						      	}
 							});
+						});
 						</script><?php
 						
 					}
@@ -113,7 +117,8 @@ class ActionsFactureCourrier
 			}						
 	
 		}
-		
+	
+		return 0;	
 	}
 
 	function formObjectOptions($parameters, &$object, &$action, $hookmanager)
@@ -128,7 +133,7 @@ class ActionsFactureCourrier
 				
 				if(empty($object->thirdparty)) $object->fetch_thirdparty();
 				
-				if(!empty($object->thirdparty->array_options['options_facture_papier']) && empty($object->array_options['options_courrier_envoi'])) {
+				if(!empty($object->thirdparty->array_options['options_facture_papier']) && $societe->array_options['options_facture_papier'] == 2 && empty($object->array_options['options_courrier_envoi'])) {
 				
 				?>
 				<script type="text/javascript">
@@ -143,6 +148,6 @@ class ActionsFactureCourrier
 			}
 		}
 
-		
+		return 0;	
 	}
 }

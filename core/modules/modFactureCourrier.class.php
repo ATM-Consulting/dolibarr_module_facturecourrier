@@ -208,12 +208,12 @@ class modFactureCourrier extends DolibarrModules
 		// Example to declare a Left Menu entry into an existing Top menu entry:
 		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=accountancy,fk_leftmenu=customers_bills',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 								'type'=>'left',			                // This is a Left menu entry
-									'titre'=>'FactureCourrier left menu',
+									'titre'=>'FactureCourrier',
 									'mainmenu'=>'customers_bills',
 									'leftmenu'=>'facture_courrier',
 									'url'=>'/facturecourrier/courrier.php',
 									'langs'=>'facturecourrier@facturecourrier',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-									'position'=>100,
+									'position'=>400,
 									'enabled'=>'$conf->facturecourrier->enabled',  // Define condition to show or hide menu entry. Use '$conf->facturecourrier->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 									'perms'=>'1',			                // Use 'perms'=>'$user->rights->facturecourrier->level1->level2' if you want your menu with a permission rules
 									'target'=>'',
@@ -258,7 +258,7 @@ class modFactureCourrier extends DolibarrModules
 
 		dol_include_once('/core/class/extrafields.class.php');
         $extrafields=new ExtraFields($this->db);
-		$res = $extrafields->addExtraField('facture_papier', 'Facture par courrier', 'select', 0, '', 'societe',0, 0,'', array("options"=> array(2=>'Non',1=>'Oui')));
+		$res = $extrafields->addExtraField('facture_papier', 'Facture par courrier', 'select', 0, '', 'societe',0, 0,'', array("options"=> array(1=>'Non',2=>'Oui')));
 		$res = $extrafields->addExtraField('courrier_envoi', 'Facture envoyée par courrier', 'date', 0, '', 'facture',0, 0,'');
 		
 		$result=$this->_load_tables('/facturecourrier/sql/');

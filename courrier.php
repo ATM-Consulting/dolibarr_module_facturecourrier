@@ -198,14 +198,14 @@ $sql.= ", f.datef as df, f.date_lim_reglement as datelimite,fex.courrier_envoi";
 $sql.= ", f.paye as paye, f.fk_statut, f.type";
 $sql.= ", sum(pf.amount) as am";
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user ";
-$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields sex ON (sex.fk_object = s.rowid)";
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= ",".MAIN_DB_PREFIX."facture as f LEFT JOIN ".MAIN_DB_PREFIX."facture_extrafields fex ON (fex.fk_object = f.rowid)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid=pf.fk_facture ";
 $sql.= " WHERE f.fk_soc = s.rowid";
 $sql.= " AND f.entity = ".$conf->entity;
 $sql.= " AND f.type IN (0,1,3) AND f.fk_statut = 1";
-$sql.= " AND fex.courrier_envoi IS NULL";
+$sql.= " AND fex.courrier_envoi IS NULL AND sex.facture_papier=2"; // facture d'entreprise à envoyée par courrier non envoyée
 if ($option == 'late') $sql.=" AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->client->warning_delay)."'";
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if (! empty($socid)) $sql .= " AND s.rowid = ".$socid;
