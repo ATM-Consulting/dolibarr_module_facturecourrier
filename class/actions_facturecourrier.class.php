@@ -67,9 +67,8 @@ class ActionsFactureCourrier
 	
 				if($action == 'update_courrier') {
 					global $user;
-					
 					$object->array_options['options_courrier_envoi'] = time();
-					$object->update($user);
+					$object->insertExtraFields();
 					
 				}
 				
@@ -119,10 +118,17 @@ class ActionsFactureCourrier
 
 	function formObjectOptions($parameters, &$object, &$action, $hookmanager)
 	{
-		
+	
 		if (in_array('invoicecard', explode(':', $parameters['context'])))
 		{
-			if($object->id>0 && $object->statut = 1 && !empty($object->array_options['options_courrier_envoi']) ) {
+			
+			global $langs, $conf, $db;
+			
+			if($object->id>0 && $object->statut = 1) {
+				
+				if(empty($object->thirdparty)) $object->fetch_thirdparty();
+				
+				if(!empty($object->thirdparty->array_options['options_facture_papier']) && empty($object->array_options['options_courrier_envoi'])) {
 				
 				?>
 				<script type="text/javascript">
@@ -131,6 +137,8 @@ class ActionsFactureCourrier
 					});
 				</script>
 				<?php
+				
+				}
 				
 			}
 		}

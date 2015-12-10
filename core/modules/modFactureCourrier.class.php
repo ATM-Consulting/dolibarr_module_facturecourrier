@@ -256,7 +256,8 @@ class modFactureCourrier extends DolibarrModules
 		dol_include_once('/facturecourrier/config.php');
 		dol_include_once('/facturecourrier/script/create-maj-base.php');
 
-
+		dol_include_once('/core/class/extrafields.class.php');
+        $extrafields=new ExtraFields($this->db);
 		$res = $extrafields->addExtraField('facture_papier', 'Facture par courrier', 'select', 0, '', 'societe',0, 0,'', array("options"=> array(2=>'Non',1=>'Oui')));
 		$res = $extrafields->addExtraField('courrier_envoi', 'Facture envoyée par courrier', 'date', 0, '', 'facture',0, 0,'');
 		
