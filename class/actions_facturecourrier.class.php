@@ -70,11 +70,13 @@ class ActionsFactureCourrier
 					$object->array_options['options_courrier_envoi'] = time();
 					$object->insertExtraFields();
 					
+					setEventMessage('ClassifyCourrier');
 				}
 				
 	
 		}
 		
+		return 0;
 	}
 	
 	function getFormMail($parameters, &$object, &$action, $hookmanager)
@@ -129,11 +131,11 @@ class ActionsFactureCourrier
 			
 			global $langs, $conf, $db;
 			
-			if($object->id>0 && $object->statut = 1) {
-				
+			if($object->id>0 && $object->statut == 1) {
+			
 				if(empty($object->thirdparty)) $object->fetch_thirdparty();
 				
-				if(!empty($object->thirdparty->array_options['options_facture_papier']) && $societe->array_options['options_facture_papier'] == 2 && empty($object->array_options['options_courrier_envoi'])) {
+				if(!empty($object->thirdparty->array_options['options_facture_papier']) && $object->thirdparty->array_options['options_facture_papier'] == 2 && empty($object->array_options['options_courrier_envoi'])) {
 				
 				?>
 				<script type="text/javascript">
