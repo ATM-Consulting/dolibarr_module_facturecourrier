@@ -8,4 +8,6 @@ FactureCourrierAbout = A propos du module FactureCourrier
 ClassifyCourrier=Classé envoyé par courrier
 UnClassifyCourrier=N'a pas été envoyé par courrier
 BillsByPrint=Factures à envoyer par courrier
-FactureCourrier=Factures à envoyées par courrier
+BillsByPrintOK=Factures déposées par courrier
+FactureCourrier=Factures à envoyer par courrier
+FactureCourrierOK=Factures déposées par courrier

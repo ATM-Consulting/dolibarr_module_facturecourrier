@@ -153,7 +153,8 @@ if ($action == 'remove_file')
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-$title=$langs->trans("BillsByPrint");
+if(GETPOST('courrier') == 1) $title=$langs->trans("BillsByPrintOK"); 
+else $title=$langs->trans("BillsByPrint");
 
 
 llxHeader('',$title);
@@ -205,7 +206,11 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid=pf.fk_fac
 $sql.= " WHERE f.fk_soc = s.rowid";
 $sql.= " AND f.entity = ".$conf->entity;
 $sql.= " AND f.type IN (0,1,3) AND f.fk_statut = 1";
-$sql.= " AND fex.courrier_envoi IS NULL AND sex.facture_papier=2"; // facture d'entreprise à envoyée par courrier non envoyée
+
+if(GETPOST('courrier') == 1) $sql.= " AND fex.courrier_envoi IS NOT NULL ";
+else $sql.= " AND fex.courrier_envoi IS NULL ";
+
+$sql.= " AND sex.facture_papier=2"; // facture d'entreprise à envoyée par courrier non envoyée
 if ($option == 'late') $sql.=" AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->client->warning_delay)."'";
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if (! empty($socid)) $sql .= " AND s.rowid = ".$socid;
@@ -257,9 +262,7 @@ if ($resql)
 	$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
 	$urlsource.=str_replace('&amp;','&',$param);
 
-	$titre=$langs->trans("BillsByPrint");
-	
-	print_fiche_titre($titre);
+	print_fiche_titre($title);
 	//print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',0);	// We don't want pagination on this page
 
 	dol_htmloutput_mesg($mesg);
