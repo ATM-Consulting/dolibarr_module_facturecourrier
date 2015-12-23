@@ -72,7 +72,13 @@ class ActionsFactureCourrier
 					
 					setEventMessage('ClassifyCourrier');
 				}
-				
+				else if($action == 'no_courrier') {
+					global $user;
+					$object->array_options['options_courrier_envoi'] = '';
+					$object->insertExtraFields();
+					
+					setEventMessage('UnClassifyCourrier');
+				}
 	
 		}
 		
@@ -135,15 +141,28 @@ class ActionsFactureCourrier
 			
 				if(empty($object->thirdparty)) $object->fetch_thirdparty();
 				
-				if(!empty($object->thirdparty->array_options['options_facture_papier']) && $object->thirdparty->array_options['options_facture_papier'] == 2 && empty($object->array_options['options_courrier_envoi'])) {
+				if(!empty($object->thirdparty->array_options['options_facture_papier']) && $object->thirdparty->array_options['options_facture_papier'] == 2) {
 				
-				?>
-				<script type="text/javascript">
-					$(document).ready(function() {
-						$('div.tabsAction').first().append('<div class="inline-block divButAction"><a href="?facid=<?php echo $object->id ?>&action=update_courrier" class="butAction"><?php echo $langs->trans('ClassifyCourrier') ?></a></div>');
-					});
-				</script>
-				<?php
+					if(empty($object->array_options['options_courrier_envoi'])) {
+						?>
+						<script type="text/javascript">
+							$(document).ready(function() {
+								$('div.tabsAction').first().append('<div class="inline-block divButAction"><a href="?facid=<?php echo $object->id ?>&action=update_courrier" class="butAction"><?php echo $langs->trans('ClassifyCourrier') ?></a></div>');
+							});
+						</script>
+						<?php
+						
+					}
+					else {
+						?>
+						<script type="text/javascript">
+							$(document).ready(function() {
+								$('div.tabsAction').first().append('<div class="inline-block divButAction"><a href="?facid=<?php echo $object->id ?>&action=no_courrier" class="butAction"><?php echo $langs->trans('UnClassifyCourrier') ?></a></div>');
+							});
+						</script>
+						<?php
+					}
+					
 				
 				}
 				

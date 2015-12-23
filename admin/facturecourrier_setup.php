@@ -104,7 +104,9 @@ print '<td>'.$langs->trans("Parameters").'</td>'."\n";
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
 
+print '<tr><td colspan=2>Ce module ne dispose pas de paramètres. Voir la fiche société pour configuré de statut d\'envoi de courrier</td></tr>';
 
+/*
 // Example with a yes / no select
 $var=!$var;
 print '<tr '.$bc[$var].'>';
@@ -118,7 +120,7 @@ print $form->selectyesno("CONSTNAME",$conf->global->CONSTNAME,1);
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</form>';
 print '</td></tr>';
-
+*/
 print '</table>';
 
 llxFooter();
