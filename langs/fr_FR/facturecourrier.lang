@@ -10,6 +10,6 @@ ClassifyCourrierMsg=Classée ‘envoyée par courrier’
 UnClassifyCourrier=Effacer la date d’envoi par courrier
 UnClassifyCourrierMsg=Date d'envoi par courrier effacée
 BillsByPrint=Factures à envoyer par courrier
-BillsByPrintOK=Factures déposées par courrier
+BillsByPrintOK=Factures envoyées par courrier
 FactureCourrier=Factures à envoyer par courrier
 FactureCourrierOK=Factures déposées par courrier
