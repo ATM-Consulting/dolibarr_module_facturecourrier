@@ -70,14 +70,14 @@ class ActionsFactureCourrier
 					$object->array_options['options_courrier_envoi'] = time();
 					$object->insertExtraFields();
 					
-					setEventMessage('ClassifyCourrier');
+					setEventMessage('ClassifyCourrierMsg');
 				}
 				else if($action == 'no_courrier') {
 					global $user;
 					$object->array_options['options_courrier_envoi'] = '';
 					$object->insertExtraFields();
 					
-					setEventMessage('UnClassifyCourrier');
+					setEventMessage('UnClassifyCourrierMsg');
 				}
 	
 		}

@@ -5,8 +5,10 @@ ATMAbout = Ce module a été développé par <a href="http://www.atm-consulting.
 
 FactureCourrierSetup = Configuration du module FactureCourrier
 FactureCourrierAbout = A propos du module FactureCourrier
-ClassifyCourrier=Classé envoyé par courrier
-UnClassifyCourrier=N'a pas été envoyé par courrier
+ClassifyCourrier=Classer ‘envoyée par courrier’
+ClassifyCourrierMsg=Classée ‘envoyée par courrier’
+UnClassifyCourrier=Effacer la date d’envoi par courrier
+UnClassifyCourrierMsg=Date d'envoi par courrier effacée
 BillsByPrint=Factures à envoyer par courrier
 BillsByPrintOK=Factures déposées par courrier
 FactureCourrier=Factures à envoyer par courrier
