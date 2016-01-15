@@ -215,7 +215,7 @@ class modFactureCourrier extends DolibarrModules
 									'langs'=>'facturecourrier@facturecourrier',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>500,
 									'enabled'=>'$conf->facturecourrier->enabled',  // Define condition to show or hide menu entry. Use '$conf->facturecourrier->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-									'perms'=>'1',			                // Use 'perms'=>'$user->rights->facturecourrier->level1->level2' if you want your menu with a permission rules
+									'perms'=>'$user->rights->facture->lire',			                // Use 'perms'=>'$user->rights->facturecourrier->level1->level2' if you want your menu with a permission rules
 									'target'=>'',
 									'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
 		$r++;
@@ -228,7 +228,7 @@ class modFactureCourrier extends DolibarrModules
 									'langs'=>'facturecourrier@facturecourrier',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>501,
 									'enabled'=>'$conf->facturecourrier->enabled',  // Define condition to show or hide menu entry. Use '$conf->facturecourrier->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-									'perms'=>'1',			                // Use 'perms'=>'$user->rights->facturecourrier->level1->level2' if you want your menu with a permission rules
+									'perms'=>'$user->rights->facture->lire',			                // Use 'perms'=>'$user->rights->facturecourrier->level1->level2' if you want your menu with a permission rules
 									'target'=>'',
 									'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
 	    $r++;
