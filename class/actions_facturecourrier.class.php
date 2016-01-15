@@ -66,9 +66,22 @@ class ActionsFactureCourrier
 		{
 	
 				if($action == 'update_courrier') {
-					global $user;
+					global $user,$db,$langs;
 					$object->array_options['options_courrier_envoi'] = time();
 					$object->insertExtraFields();
+					
+					dol_include_once('/comm/action/class/actioncomm.class.php');
+					
+					$a=new ActionComm($db);
+					$a->type_code = 'AC_OTH_AUTO';
+					$a->label = $langs->trans('ClassifyCourrierEvent',$object->ref);
+					$a->fk_element = $object->id;
+					$a->elementtype = 'facture';
+					$a->usertodo = $user;
+					$a->userdone = $user;
+					$a->percentage = 100;
+					$a->datep = date('Y-m-d H:i:s');
+					$a->add($user);
 					
 					setEventMessage('ClassifyCourrierMsg');
 				}

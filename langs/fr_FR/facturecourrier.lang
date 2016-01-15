@@ -7,6 +7,7 @@ FactureCourrierSetup = Configuration du module FactureCourrier
 FactureCourrierAbout = A propos du module FactureCourrier
 ClassifyCourrier=Classer ‘envoyée par courrier’
 ClassifyCourrierMsg=Classée ‘envoyée par courrier’
+ClassifyCourrierEvent=%s classée ‘envoyée par courrier’
 UnClassifyCourrier=Effacer la date d’envoi par courrier
 UnClassifyCourrierMsg=Date d'envoi par courrier effacée
 BillsByPrint=Factures à envoyer par courrier
