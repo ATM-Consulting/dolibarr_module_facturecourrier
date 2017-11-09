@@ -209,7 +209,7 @@ class modFactureCourrier extends DolibarrModules
 		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=accountancy,fk_leftmenu=customers_bills',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 									'type'=>'left',			                // This is a Left menu entry
 									'titre'=>'FactureCourrier',
-									'mainmenu'=>'customers_bills',
+									'mainmenu'=>'accountancy',
 									'leftmenu'=>'facture_courrier',
 									'url'=>'/facturecourrier/courrier.php',
 									'langs'=>'facturecourrier@facturecourrier',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -222,7 +222,7 @@ class modFactureCourrier extends DolibarrModules
 		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=accountancy,fk_leftmenu=customers_bills',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 									'type'=>'left',			                // This is a Left menu entry
 									'titre'=>'FactureCourrierOK',
-									'mainmenu'=>'facture_courrier',
+									'mainmenu'=>'accountancy',
 									'leftmenu'=>'facture_courrier_ok',
 									'url'=>'/facturecourrier/courrier.php?courrier=1',
 									'langs'=>'facturecourrier@facturecourrier',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
