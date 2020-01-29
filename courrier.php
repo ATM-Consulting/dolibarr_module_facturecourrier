@@ -45,7 +45,7 @@ $result = restrictedArea($user,'facture',$id,'');
 
 $diroutputpdf=$conf->facture->dir_output . '/unpaid/temp';
 if (! $user->rights->societe->client->voir || $socid) $diroutputpdf.='/private/'.$user->id;	// If user has no permission to see all, output dir is specific to user
-
+$fac_field_ref = (float)DOL_VERSION > 9 ? 'ref' : 'facnumber';
 
 /*
  * Action
@@ -156,7 +156,6 @@ $formfile = new FormFile($db);
 if(GETPOST('courrier') == 1) $title=$langs->trans("BillsByPrintOK"); 
 else $title=$langs->trans("BillsByPrint");
 
-
 llxHeader('',$title);
 
 ?>
@@ -184,7 +183,7 @@ $late = GETPOST("late");
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if ($page == -1 || empty($page)) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -194,7 +193,7 @@ if (! $sortorder) $sortorder="ASC";
 $limit = $conf->liste_limit;
 
 $sql = "SELECT s.nom, s.rowid as socid";
-$sql.= ", f.rowid as facid, f.facnumber, f.ref_client, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.localtax1, f.localtax2, f.revenuestamp";
+$sql.= ", f.rowid as facid, f.".$fac_field_ref.", f.ref_client, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.localtax1, f.localtax2, f.revenuestamp";
 $sql.= ", f.datef as df, f.date_lim_reglement as datelimite,fex.courrier_envoi";
 $sql.= ", f.paye as paye, f.fk_statut, f.type";
 $sql.= ", sum(pf.amount) as am";
@@ -223,18 +222,18 @@ if (GETPOST('filtre'))
 		$sql .= " AND " . $filt[0] . " = " . $filt[1];
 	}
 }
-if ($search_ref)         $sql .= " AND f.facnumber LIKE '%".$db->escape($search_ref)."%'";
+if ($search_ref)         $sql .= " AND f.".$fac_field_ref." LIKE '%".$db->escape($search_ref)."%'";
 if ($search_refcustomer) $sql .= " AND f.ref_client LIKE '%".$db->escape($search_refcustomer)."%'";
 if ($search_societe)     $sql .= " AND s.nom LIKE '%".$db->escape($search_societe)."%'";
 if ($search_montant_ht)  $sql .= " AND f.total = '".$db->escape($search_montant_ht)."'";
 if ($search_montant_ttc) $sql .= " AND f.total_ttc = '".$db->escape($search_montant_ttc)."'";
-if (GETPOST('sf_ref'))   $sql .= " AND f.facnumber LIKE '%".$db->escape(GETPOST('sf_ref'))."%'";
-$sql.= " GROUP BY s.nom, s.rowid, f.rowid, f.facnumber, f.increment, f.total, f.tva, f.total_ttc, f.localtax1, f.localtax2, f.revenuestamp, f.datef, f.date_lim_reglement, f.paye, f.fk_statut, f.type ";
+if (GETPOST('sf_ref'))   $sql .= " AND f.".$fac_field_ref." LIKE '%".$db->escape(GETPOST('sf_ref'))."%'";
+$sql.= " GROUP BY s.nom, s.rowid, f.rowid, f.".$fac_field_ref.", f.increment, f.total, f.tva, f.total_ttc, f.localtax1, f.localtax2, f.revenuestamp, f.datef, f.date_lim_reglement, f.paye, f.fk_statut, f.type, fex.courrier_envoi ";
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " ORDER BY ";
 $listfield=explode(',',$sortfield);
 foreach ($listfield as $key => $value) $sql.=$listfield[$key]." ".$sortorder.",";
-$sql.= " f.facnumber DESC";
+$sql.= " f.".$fac_field_ref." DESC";
 
 //$sql .= $db->plimit($limit+1,$offset);
 
@@ -274,7 +273,7 @@ if ($resql)
 	$i = 0;
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.facnumber","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.".$fac_field_ref,"",$param,"",$sortfield,$sortorder);
    	print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'f.ref_client','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"f.datef","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"f.date_lim_reglement","",$param,'align="center"',$sortfield,$sortorder);
@@ -335,7 +334,7 @@ if ($resql)
 			print '<td class="nowrap">';
 
 			$facturestatic->id=$objp->facid;
-			$facturestatic->ref=$objp->facnumber;
+			$facturestatic->ref=$objp->{$fac_field_ref};
 			$facturestatic->type=$objp->type;
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
@@ -352,8 +351,8 @@ if ($resql)
 
 			// PDF Picto
 			print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
-            $filename=dol_sanitizeFileName($objp->facnumber);
-			$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($objp->facnumber);
+            $filename=dol_sanitizeFileName($objp->{$fac_field_ref});
+			$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($objp->{$fac_field_ref});
 			print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
             print '</td>';
 
@@ -396,10 +395,10 @@ if ($resql)
 
 			// Checkbox
 			print '<td align="center">';
-			if (! empty($formfile->numoffiles))
-				print '<input id="cb'.$objp->facid.'" class="flat checkformerge" type="checkbox" name="toGenerate[]" value="'.$objp->facnumber.'">';
-			else
-				print '&nbsp;';
+//			if (! empty($formfile->numoffiles))
+				print '<input id="cb'.$objp->facid.'" class="flat checkformerge" type="checkbox" name="toGenerate[]" value="'.$objp->{$fac_field_ref}.'">';
+//			else
+//				print '&nbsp;';
 			print '</td>' ;
 
 			print "</tr>\n";
