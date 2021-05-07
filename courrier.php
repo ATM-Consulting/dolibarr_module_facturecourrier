@@ -347,7 +347,7 @@ if ($resql)
 			// PDF Picto
 			print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
             $filename=dol_sanitizeFileName($objp->ref);
-			$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($objp->facnumber);
+			$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($objp->ref);
 			print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
             print '</td>';
 
