@@ -79,10 +79,12 @@ class ActionsFactureCourrier
 					$a->elementtype = 'facture';
 					$a->usertodo = $user;
 					$a->userdone = $user;
+					if(property_exists('ActionComm', 'userownerid')) $a->userownerid = $user->id;
 					$a->percentage = 100;
 					$a->datep = date('Y-m-d H:i:s');
-					$a->add($user);
-					
+					if(method_exists($a, 'add')) $a->add($user);
+					else $res=$a->create($user);
+
 					setEventMessage('ClassifyCourrierMsg');
 				}
 				else if($action == 'no_courrier') {

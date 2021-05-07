@@ -184,7 +184,7 @@ $late = GETPOST("late", 'none');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if ($page == -1 || empty($page)) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -196,7 +196,7 @@ $limit = $conf->liste_limit;
 $invoiceRefDBField = floatval(DOL_VERSION) >= 10 ? 'ref' : 'facnumber';
 
 $sql = "SELECT s.nom, s.rowid as socid";
-$sql.= ", f.rowid as facid, f." .$invoiceRefDBField." as facnumber, f.ref_client, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.localtax1, f.localtax2, f.revenuestamp";
+$sql.= ", f.rowid as facid, f." .$invoiceRefDBField." as ref, f.ref_client, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.localtax1, f.localtax2, f.revenuestamp";
 $sql.= ", f.datef as df, f.date_lim_reglement as datelimite,fex.courrier_envoi";
 $sql.= ", f.paye as paye, f.fk_statut, f.type";
 $sql.= ", sum(pf.amount) as am";
@@ -216,15 +216,7 @@ $sql.= " AND sex.facture_papier=2"; // facture d'entreprise à envoyée par cour
 if ($option == 'late') $sql.=" AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->client->warning_delay)."'";
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if (! empty($socid)) $sql .= " AND s.rowid = ".$socid;
-if (GETPOST('filtre', 'alpha'))
-{
-	$filtrearr = explode(",", GETPOST('filtre', 'alpha'));
-	foreach ($filtrearr as $fil)
-	{
-		$filt = explode(":", $fil);
-		$sql .= " AND " . $filt[0] . " = " . $filt[1];
-	}
-}
+
 if ($search_ref)         $sql .= " AND f." .$invoiceRefDBField. " LIKE '%".$db->escape($search_ref)."%'";
 if ($search_refcustomer) $sql .= " AND f.ref_client LIKE '%".$db->escape($search_refcustomer)."%'";
 if ($search_societe)     $sql .= " AND s.nom LIKE '%".$db->escape($search_societe)."%'";
@@ -337,7 +329,7 @@ if ($resql)
 			print '<td class="nowrap">';
 
 			$facturestatic->id=$objp->facid;
-			$facturestatic->ref=$objp->facnumber;
+			$facturestatic->ref=$objp->ref;
 			$facturestatic->type=$objp->type;
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
@@ -354,7 +346,7 @@ if ($resql)
 
 			// PDF Picto
 			print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
-            $filename=dol_sanitizeFileName($objp->facnumber);
+            $filename=dol_sanitizeFileName($objp->ref);
 			$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($objp->facnumber);
 			print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
             print '</td>';
@@ -371,7 +363,7 @@ if ($resql)
 			print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->df),'day').'</td>'."\n";
 			print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->datelimite),'day').'</td>'."\n";
 
-			print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,28).'</a></td>';
+			print '<td><a href="'.DOL_URL_ROOT.'/comm/'.((float)DOL_VERSION > 3.6 ? 'card' : 'fiche').'.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,28).'</a></td>';
 
 			print '<td align="right">'.price($objp->total_ht).'</td>';
 			print '<td align="right">'.price($objp->total_tva);
@@ -398,10 +390,10 @@ if ($resql)
 
 			// Checkbox
 			print '<td align="center">';
-			if (! empty($formfile->numoffiles))
-				print '<input id="cb'.$objp->facid.'" class="flat checkformerge" type="checkbox" name="toGenerate[]" value="'.$objp->facnumber.'">';
-			else
-				print '&nbsp;';
+//			if (! empty($formfile->numoffiles))
+				print '<input id="cb'.$objp->facid.'" class="flat checkformerge" type="checkbox" name="toGenerate[]" value="'.$objp->ref.'">';
+//			else
+//				print '&nbsp;';
 			print '</td>' ;
 
 			print "</tr>\n";

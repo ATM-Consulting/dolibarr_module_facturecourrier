@@ -58,7 +58,7 @@ class modFactureCourrier extends DolibarrModules
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Description of module FactureCourrier";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = '1.0.4';
+		$this->version = '1.0.5';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
@@ -206,27 +206,27 @@ class modFactureCourrier extends DolibarrModules
 		// $r++;
 		//
 		// Example to declare a Left Menu entry into an existing Top menu entry:
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=accountancy,fk_leftmenu=customers_bills',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu='.((float)DOL_VERSION > 6 ? 'billing' : 'accountancy').',fk_leftmenu=customers_bills',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 									'type'=>'left',			                // This is a Left menu entry
 									'titre'=>'FactureCourrier',
-									'mainmenu'=>'accountancy',
+									'mainmenu'=>(float)DOL_VERSION > 6 ? 'billing' : 'accountancy',
 									'leftmenu'=>'facture_courrier',
 									'url'=>'/facturecourrier/courrier.php',
 									'langs'=>'facturecourrier@facturecourrier',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-									'position'=>102,
+//									'position'=>102,
 									'enabled'=>'$conf->facturecourrier->enabled',  // Define condition to show or hide menu entry. Use '$conf->facturecourrier->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 									'perms'=>'$user->rights->facture->lire',			                // Use 'perms'=>'$user->rights->facturecourrier->level1->level2' if you want your menu with a permission rules
 									'target'=>'',
 									'user'=>0);				                // 0=Menu for internal users, 1=external users, 2=both
 		$r++;
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=accountancy,fk_leftmenu=customers_bills',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu='.((float)DOL_VERSION > 6 ? 'billing' : 'accountancy').',fk_leftmenu=customers_bills',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 									'type'=>'left',			                // This is a Left menu entry
 									'titre'=>'FactureCourrierOK',
-									'mainmenu'=>'accountancy',
+									'mainmenu'=>(float)DOL_VERSION > 6 ? 'billing' : 'accountancy',
 									'leftmenu'=>'facture_courrier_ok',
 									'url'=>'/facturecourrier/courrier.php?courrier=1',
 									'langs'=>'facturecourrier@facturecourrier',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-									'position'=>103,
+//									'position'=>103,
 									'enabled'=>'$conf->facturecourrier->enabled',  // Define condition to show or hide menu entry. Use '$conf->facturecourrier->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 									'perms'=>'$user->rights->facture->lire',			                // Use 'perms'=>'$user->rights->facturecourrier->level1->level2' if you want your menu with a permission rules
 									'target'=>'',
