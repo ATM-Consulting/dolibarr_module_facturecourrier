@@ -36,8 +36,8 @@ $langs->load("bills");
 
 $id = (GETPOST('facid','int') ? GETPOST('facid','int') : GETPOST('id','int'));
 $action = GETPOST('action','alpha');
-$option = GETPOST('option');
-$builddoc_generatebutton=GETPOST('builddoc_generatebutton');
+$option = GETPOST('option', 'none');
+$builddoc_generatebutton=GETPOST('builddoc_generatebutton', 'none');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -45,13 +45,13 @@ $result = restrictedArea($user,'facture',$id,'');
 
 $diroutputpdf=$conf->facture->dir_output . '/unpaid/temp';
 if (! $user->rights->societe->client->voir || $socid) $diroutputpdf.='/private/'.$user->id;	// If user has no permission to see all, output dir is specific to user
-$fac_field_ref = (float)DOL_VERSION > 9 ? 'ref' : 'facnumber';
+
 
 /*
  * Action
  */
 
-if ($action == "builddoc" && $user->rights->facture->lire && ! GETPOST('button_search') && !empty($builddoc_generatebutton))
+if ($action == "builddoc" && $user->rights->facture->lire && ! GETPOST('button_search', 'none') && !empty($builddoc_generatebutton))
 {
 	if (is_array($_POST['toGenerate']))
 	{
@@ -73,7 +73,7 @@ if ($action == "builddoc" && $user->rights->facture->lire && ! GETPOST('button_s
         // Define output language (Here it is not used because we do only merging existing PDF)
         $outputlangs = $langs;
         $newlang='';
-        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
+        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'none')) $newlang=GETPOST('lang_id', 'none');
         if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
         if (! empty($newlang))
         {
@@ -137,10 +137,10 @@ if ($action == 'remove_file')
 
 	$langs->load("other");
 	$upload_dir = $diroutputpdf;
-	$file = $upload_dir . '/' . GETPOST('file');
+	$file = $upload_dir . '/' . GETPOST('file', 'none');
 	$ret=dol_delete_file($file,0,0,0,'');
-	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile', 'none')));
+	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile', 'none')), 'errors');
 	$action='';
 }
 
@@ -153,8 +153,9 @@ if ($action == 'remove_file')
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-if(GETPOST('courrier') == 1) $title=$langs->trans("BillsByPrintOK"); 
+if(GETPOST('courrier', 'none') == 1) $title=$langs->trans("BillsByPrintOK");
 else $title=$langs->trans("BillsByPrint");
+
 
 llxHeader('',$title);
 
@@ -173,12 +174,12 @@ $(document).ready(function() {
 
 $now=dol_now();
 
-$search_ref = GETPOST("search_ref");
-$search_refcustomer=GETPOST('search_refcustomer');
-$search_societe = GETPOST("search_societe");
-$search_montant_ht = GETPOST("search_montant_ht");
-$search_montant_ttc = GETPOST("search_montant_ttc");
-$late = GETPOST("late");
+$search_ref = GETPOST("search_ref", 'alpha');
+$search_refcustomer=GETPOST('search_refcustomer', 'alpha');
+$search_societe = GETPOST("search_societe", 'alpha');
+$search_montant_ht = GETPOST("search_montant_ht", 'alpha');
+$search_montant_ttc = GETPOST("search_montant_ttc", 'alpha');
+$late = GETPOST("late", 'none');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -192,8 +193,10 @@ if (! $sortorder) $sortorder="ASC";
 
 $limit = $conf->liste_limit;
 
+$invoiceRefDBField = floatval(DOL_VERSION) >= 10 ? 'ref' : 'facnumber';
+
 $sql = "SELECT s.nom, s.rowid as socid";
-$sql.= ", f.rowid as facid, f.".$fac_field_ref.", f.ref_client, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.localtax1, f.localtax2, f.revenuestamp";
+$sql.= ", f.rowid as facid, f." .$invoiceRefDBField." as ref, f.ref_client, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.localtax1, f.localtax2, f.revenuestamp";
 $sql.= ", f.datef as df, f.date_lim_reglement as datelimite,fex.courrier_envoi";
 $sql.= ", f.paye as paye, f.fk_statut, f.type";
 $sql.= ", sum(pf.amount) as am";
@@ -206,34 +209,26 @@ $sql.= " WHERE f.fk_soc = s.rowid";
 $sql.= " AND f.entity = ".$conf->entity;
 $sql.= " AND f.type IN (0,1,3) AND f.fk_statut = 1";
 
-if(GETPOST('courrier') == 1) $sql.= " AND fex.courrier_envoi IS NOT NULL ";
+if(GETPOST('courrier', 'none') == 1) $sql.= " AND fex.courrier_envoi IS NOT NULL ";
 else $sql.= " AND fex.courrier_envoi IS NULL ";
 
 $sql.= " AND sex.facture_papier=2"; // facture d'entreprise à envoyée par courrier non envoyée
 if ($option == 'late') $sql.=" AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->client->warning_delay)."'";
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if (! empty($socid)) $sql .= " AND s.rowid = ".$socid;
-if (GETPOST('filtre'))
-{
-	$filtrearr = explode(",", GETPOST('filtre'));
-	foreach ($filtrearr as $fil)
-	{
-		$filt = explode(":", $fil);
-		$sql .= " AND " . $filt[0] . " = " . $filt[1];
-	}
-}
-if ($search_ref)         $sql .= " AND f.".$fac_field_ref." LIKE '%".$db->escape($search_ref)."%'";
+
+if ($search_ref)         $sql .= " AND f." .$invoiceRefDBField. " LIKE '%".$db->escape($search_ref)."%'";
 if ($search_refcustomer) $sql .= " AND f.ref_client LIKE '%".$db->escape($search_refcustomer)."%'";
 if ($search_societe)     $sql .= " AND s.nom LIKE '%".$db->escape($search_societe)."%'";
 if ($search_montant_ht)  $sql .= " AND f.total = '".$db->escape($search_montant_ht)."'";
 if ($search_montant_ttc) $sql .= " AND f.total_ttc = '".$db->escape($search_montant_ttc)."'";
-if (GETPOST('sf_ref'))   $sql .= " AND f.".$fac_field_ref." LIKE '%".$db->escape(GETPOST('sf_ref'))."%'";
-$sql.= " GROUP BY s.nom, s.rowid, f.rowid, f.".$fac_field_ref.", f.increment, f.total, f.tva, f.total_ttc, f.localtax1, f.localtax2, f.revenuestamp, f.datef, f.date_lim_reglement, f.paye, f.fk_statut, f.type, fex.courrier_envoi ";
+if (GETPOST('sf_ref', 'none'))   $sql .= " AND f." .$invoiceRefDBField. " LIKE '%".$db->escape(GETPOST('sf_ref'))."%'";
+$sql.= " GROUP BY s.nom, s.rowid, f.rowid, f." .$invoiceRefDBField. ", f.increment, f.total, f.tva, f.total_ttc, f.localtax1, f.localtax2, f.revenuestamp, f.datef, f.date_lim_reglement, f.paye, f.fk_statut, f.type ";
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " ORDER BY ";
 $listfield=explode(',',$sortfield);
 foreach ($listfield as $key => $value) $sql.=$listfield[$key]." ".$sortorder.",";
-$sql.= " f.".$fac_field_ref." DESC";
+$sql.= " f." .$invoiceRefDBField. " DESC";
 
 //$sql .= $db->plimit($limit+1,$offset);
 
@@ -273,7 +268,7 @@ if ($resql)
 	$i = 0;
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.".$fac_field_ref,"",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.".$invoiceRefDBField."","",$param,"",$sortfield,$sortorder);
    	print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'f.ref_client','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"f.datef","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"f.date_lim_reglement","",$param,'align="center"',$sortfield,$sortorder);
@@ -334,7 +329,7 @@ if ($resql)
 			print '<td class="nowrap">';
 
 			$facturestatic->id=$objp->facid;
-			$facturestatic->ref=$objp->{$fac_field_ref};
+			$facturestatic->ref=$objp->ref;
 			$facturestatic->type=$objp->type;
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
@@ -351,8 +346,8 @@ if ($resql)
 
 			// PDF Picto
 			print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
-            $filename=dol_sanitizeFileName($objp->{$fac_field_ref});
-			$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($objp->{$fac_field_ref});
+            $filename=dol_sanitizeFileName($objp->ref);
+			$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($objp->ref);
 			print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
             print '</td>';
 
@@ -396,7 +391,7 @@ if ($resql)
 			// Checkbox
 			print '<td align="center">';
 //			if (! empty($formfile->numoffiles))
-				print '<input id="cb'.$objp->facid.'" class="flat checkformerge" type="checkbox" name="toGenerate[]" value="'.$objp->{$fac_field_ref}.'">';
+				print '<input id="cb'.$objp->facid.'" class="flat checkformerge" type="checkbox" name="toGenerate[]" value="'.$objp->ref.'">';
 //			else
 //				print '&nbsp;';
 			print '</td>' ;
