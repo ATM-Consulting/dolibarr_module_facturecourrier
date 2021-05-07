@@ -58,7 +58,7 @@ class modFactureCourrier extends DolibarrModules
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Description of module FactureCourrier";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = '1.0.4';
+		$this->version = '1.0.5';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
@@ -88,7 +88,7 @@ class modFactureCourrier extends DolibarrModules
 		//							'workflow' => array('WORKFLOW_MODULE1_YOURACTIONTYPE_MODULE2'=>array('enabled'=>'! empty($conf->module1->enabled) && ! empty($conf->module2->enabled)', 'picto'=>'yourpicto@facturecourrier')) // Set here all workflow context managed by module
 		//                        );
 		$this->module_parts = array(
-		
+
 			'hooks'=>array('invoicecard','formmail')
 		);
 
@@ -262,7 +262,7 @@ class modFactureCourrier extends DolibarrModules
 	function init($options='')
 	{
 		$sql = array();
-		
+
 		define('INC_FROM_DOLIBARR',true);
 
 		dol_include_once('/facturecourrier/config.php');
@@ -272,7 +272,7 @@ class modFactureCourrier extends DolibarrModules
         $extrafields=new ExtraFields($this->db);
 		$res = $extrafields->addExtraField('facture_papier', 'Facture par courrier', 'select', 0, '', 'societe',0, 0,'', array("options"=> array(1=>'Non',2=>'Oui')));
 		$res = $extrafields->addExtraField('courrier_envoi', 'Facture envoyée par courrier', 'date', 0, '', 'facture',0, 0,'');
-		
+
 		$result=$this->_load_tables('/facturecourrier/sql/');
 
 		return $this->_init($sql, $options);
